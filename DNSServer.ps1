@@ -7,8 +7,7 @@ try {
 
 # Instalación del rol DNS en el Administrador de Servicio
 Install-WindowsFeature -Name DNS -IncludeManagementTools
-Get-WindowsFeature -Name DNS
-
+Restart-Service DNS
 # Crear la zona primaria
 Add-DNSServerPrimaryZone -Name "misitio.com" -ZoneFile "misitio.com.dns" -DynamicUpdate "NonSecureAndSecure"
 
