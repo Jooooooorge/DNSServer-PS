@@ -1,3 +1,16 @@
+#******************************************************************************************
+# DNSServer
+<# Este programa realiza levanta de manera automatica un servidor DNS
+   para Windows Server, el programa le solicita al usuario una dirección IP
+   la valida y solicita el nombre del dominio. 
+#>
+# Función para validar la dirección IP con expresión regular
+function Validate-IP {
+    param([string]$IP)
+    # Regex para validar una dirección IP IPv4
+    $regex = '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+    return $IP -match $regex
+}
 # Asegurarse de que el servicio DNS no está instalado
 try {
     Uninstall-WindowsFeature -Name DNS -ErrorAction Stop
@@ -5,6 +18,20 @@ try {
 } catch {
     Write-Host "[INFO] El rol DNS no estaba instalado o no se pudo desinstalar."
 }
+
+# Pedir al usuario que introduzca la dirección IP manualmente
+do {
+    $serverIP = Read-Host "Introduce la dirección IP que deseas asignar al servidor (ejemplo: 192.168.1.10)"
+    
+    # Validar la IP usando la función
+    if (-not (Validate-IP $serverIP)) {
+        Write-Host "[ERROR] La dirección IP no es válida. Asegúrate de que esté en el formato correcto (ejemplo: 192.168.1.10)." -ForegroundColor Red
+    }
+} while (-not (Validate-IP $serverIP))
+
+Write-Host "[INFO] Dirección IP asignada manualmente: $serverIP"
+
+
 
 # Instalación del rol DNS
 Install-WindowsFeature -Name DNS -IncludeManagementTools
@@ -22,20 +49,11 @@ try {
     Exit 1
 }
 
-# Obtener la dirección IP del servidor
-$ipv4 = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -NotMatch "^169" }).IPAddress | Select-Object -First 1
-
-if (-not $ipv4) {
-    Write-Host "[ERROR] No se detectó una dirección IP válida. Configura una dirección estática antes de continuar."
-    Exit 1
-}
-
-Write-Host "[INFO] Dirección IP detectada: $ipv4"
 
 # Crear el registro A para el dominio
 try {
-    Add-DnsServerResourceRecordA -ZoneName "misitio.com" -Name "@" -AllowUpdateAny -IPv4Address $ipv4
-    Write-Host "[INFO] Registro A creado correctamente para 'misitio.com' con IP $ipv4."
+    Add-DnsServerResourceRecordA -ZoneName "misitio.com" -Name "@" -AllowUpdateAny -IPv4Address $serverIP
+    Write-Host "[INFO] Registro A creado correctamente para 'misitio.com' con IP $serverIP."
 } catch {
     Write-Host "[ERROR] No se pudo crear el registro A. Verifica si la zona existe y si la IP es válida."
     Exit 1
