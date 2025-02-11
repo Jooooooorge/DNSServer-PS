@@ -53,6 +53,7 @@ try {
 
 # Crear el registro A para el dominio
 try {
+    Remove-DnsServerZone -Name "misitio.com"
     Add-DnsServerResourceRecordA -ZoneName "misitio.com" -Name "@" -AllowUpdateAny -IPv4Address $serverIP
     Write-Host "[INFO] Registro A creado correctamente para 'misitio.com' con IP $serverIP."
 } catch {
