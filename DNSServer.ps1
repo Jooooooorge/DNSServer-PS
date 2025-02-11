@@ -51,7 +51,26 @@ if ($dnsServer) {
         Write-Host "[ERROR] No se pudo crear el registro A para el dominio $domain."
         Exit 1
     }
-
+     # Crear la zona inversa para buscar por IP
+     $ipParts = $ipAddress.Split('.')
+     $reverseIp = "$($ipParts[2]).$($ipParts[1]).$($ipParts[0]).in-addr.arpa"
+ 
+     try {
+         Add-DnsServerPrimaryZone -Name $reverseIp -ZoneFile "$reverseIp.dns" -DynamicUpdate "NonSecureAndSecure"
+         Write-Host "Zona inversa creada para la IP $ipAddress con el nombre $reverseIp."
+     } catch {
+         Write-Host "[ERROR] No se pudo crear la zona inversa para la IP $ipAddress."
+         Exit 1
+     }
+ 
+     # Crear el registro PTR para la zona inversa
+     try {
+         Add-DnsServerResourceRecordPTR -ZoneName $reverseIp -Name "$($ipParts[3])" -PTRDomainName "$domain"
+         Write-Host "Registro PTR creado para la IP $ipAddress apuntando a $domain."
+     } catch {
+         Write-Host "[ERROR] No se pudo crear el registro PTR."
+         Exit 1
+     }
     # Configurar el servidor DNS para responder a consultas (forwarders)
     Set-DnsServerForwarder -IPAddress $ipAddress
     Write-Host "El servidor DNS ha sido configurado para el dominio $domain con la IP $ipAddress."
