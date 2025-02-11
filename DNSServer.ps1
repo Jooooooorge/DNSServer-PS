@@ -34,7 +34,6 @@ if ($dnsServer) {
         Add-DnsServerPrimaryZone -Name $domain -ZoneFile "$domain.dns" -DynamicUpdate "NonSecureAndSecure"
         Write-Host "Zona primaria creada para el dominio $domain."
     } catch {
-        Write-Host "[ERROR] No se pudo crear la zona primaria. Verifica los permisos o si ya existe una zona con el mismo nombre."
         Exit 1
     }
 
