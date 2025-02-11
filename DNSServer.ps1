@@ -1,9 +1,7 @@
-#******************************************************************************************
-# DNSServer
-<# Este programa realiza levanta de manera automatica un servidor DNS
-   para Windows Server, el programa le solicita al usuario una dirección IP
-   la valida y solicita el nombre del dominio. 
-#>
+# Solicitar al usuario el dominio y la IP
+$domain = Read-Host "Ingrese el nombre del dominio (por ejemplo: misitio.com)"
+$ipAddress = Read-Host "Ingrese la dirección IP del servidor DNS (por ejemplo: 192.168.1.10)"
+
 # Función para validar la dirección IP con expresión regular
 function Validate-IP {
     param([string]$IP)
@@ -11,56 +9,53 @@ function Validate-IP {
     $regex = '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
     return $IP -match $regex
 }
-# Asegurarse de que el servicio DNS no está instalado
-try {
-    Uninstall-WindowsFeature -Name DNS -ErrorAction Stop
-    Write-Host "[INFO] El rol DNS fue desinstalado exitosamente."
-} catch {
-    Write-Host "[INFO] El rol DNS no estaba instalado o no se pudo desinstalar."
+
+# Validar la dirección IP del servidor DNS
+if (-not (Validate-IP $ipAddress)) {
+    Write-Host "[ERROR] La dirección IP proporcionada no es válida. Por favor, ingrese una IP válida."
+    Exit 1
 }
 
+# Instalar el rol de servidor DNS si no está instalado
+$dnsRole = Get-WindowsFeature -Name DNS
+if ($dnsRole.Installed -eq $false) {
+    Install-WindowsFeature -Name DNS
+    Write-Host "El rol de servidor DNS ha sido instalado."
+} else {
+    Write-Host "El rol de servidor DNS ya está instalado."
+}
 
+# Configurar el servidor DNS
+$dnsServer = Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IPEnabled -eq $true }
 
-
-# Instalación del rol DNS
-Install-WindowsFeature -Name DNS -IncludeManagementTools
-Write-Host "[INFO] Rol DNS instalado correctamente."
-
-# Reiniciar el servicio DNS para asegurar que esté activo
-Restart-Service DNS
-
-# Pedir al usuario que introduzca la dirección IP manualmente
-do {
-    $serverIP = Read-Host "Introduce la dirección IP que deseas asignar al servidor (ejemplo: 192.168.1.10)"
+if ($dnsServer) {
+    Write-Host "Configurando servidor DNS..."
     
-    # Validar la IP usando la función
-    if (-not (Validate-IP $serverIP)) {
-        Write-Host "[ERROR] La dirección IP no es válida. Asegúrate de que esté en el formato correcto (ejemplo: 192.168.1.10)." -ForegroundColor Red
+    # Establecer la IP de la interfaz de red
+    $dnsServer.SetDNSServerSearchOrder($ipAddress)
+    
+    # Crear una zona DNS para el dominio ingresado
+    try {
+        Add-DnsServerPrimaryZone -Name $domain -ZoneFile "$domain.dns" -DynamicUpdate "NonSecureAndSecure"
+        Write-Host "Zona primaria creada para el dominio $domain."
+    } catch {
+        Write-Host "[ERROR] No se pudo crear la zona primaria. Verifica los permisos o si ya existe una zona con el mismo nombre."
+        Exit 1
     }
-} while (-not (Validate-IP $serverIP))
 
-Write-Host "[INFO] Dirección IP asignada manualmente: $serverIP"
+    # Crear el registro A para el dominio ingresado y asignar la IP proporcionada
+    try {
+        Add-DnsServerResourceRecordA -ZoneName $domain -Name "@" -AllowUpdateAny -IPv4Address $ipAddress
+        Write-Host "Registro A creado para el dominio $domain con la IP $ipAddress."
+    } catch {
+        Write-Host "[ERROR] No se pudo crear el registro A para el dominio $domain."
+        Exit 1
+    }
 
-# Crear la zona primaria
-try {
-    Add-DnsServerPrimaryZone -Name "misitio.com" -ZoneFile "misitio.com.dns" -DynamicUpdate "NonSecureAndSecure"
-    Write-Host "[INFO] Zona primaria 'misitio.com' creada correctamente."
-} catch {
-    Write-Host "[ERROR] No se pudo crear la zona primaria. Verifica si ya existe o revisa los permisos."
+    # Configurar el servidor DNS para responder a consultas (forwarders)
+    Set-DnsServerForwarder -IPAddress $ipAddress
+    Write-Host "El servidor DNS ha sido configurado para el dominio $domain con la IP $ipAddress."
+} else {
+    Write-Host "[ERROR] No se encontró una interfaz de red activa. Asegúrate de que la interfaz de red esté habilitada."
     Exit 1
 }
-
-
-# Crear el registro A para el dominio
-try {
-    Remove-DnsServerZone -Name "misitio.com"
-    Add-DnsServerResourceRecordA -ZoneName "misitio.com" -Name "@" -AllowUpdateAny -IPv4Address $serverIP
-    Write-Host "[INFO] Registro A creado correctamente para 'misitio.com' con IP $serverIP."
-} catch {
-    Write-Host "[ERROR] No se pudo crear el registro A. Verifica si la zona existe y si la IP es válida."
-    Exit 1
-}
-
-# Reiniciar el servicio DNS como paso final
-Restart-Service DNS
-Write-Host "[INFO] Configuración del servidor DNS completada con éxito."
