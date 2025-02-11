@@ -29,11 +29,6 @@ if ($dnsRole.Installed -eq $false) {
 $dnsServer = Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IPEnabled -eq $true }
 
 if ($dnsServer) {
-    Write-Host "Configurando servidor DNS..."
-    
-    # Establecer la IP de la interfaz de red
-    $dnsServer.SetDNSServerSearchOrder($ipAddress)
-    
     # Crear una zona DNS para el dominio ingresado
     try {
         Add-DnsServerPrimaryZone -Name $domain -ZoneFile "$domain.dns" -DynamicUpdate "NonSecureAndSecure"
