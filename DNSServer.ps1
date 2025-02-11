@@ -19,6 +19,16 @@ try {
     Write-Host "[INFO] El rol DNS no estaba instalado o no se pudo desinstalar."
 }
 
+
+
+
+# Instalación del rol DNS
+Install-WindowsFeature -Name DNS -IncludeManagementTools
+Write-Host "[INFO] Rol DNS instalado correctamente."
+
+# Reiniciar el servicio DNS para asegurar que esté activo
+Restart-Service DNS
+
 # Pedir al usuario que introduzca la dirección IP manualmente
 do {
     $serverIP = Read-Host "Introduce la dirección IP que deseas asignar al servidor (ejemplo: 192.168.1.10)"
@@ -30,15 +40,6 @@ do {
 } while (-not (Validate-IP $serverIP))
 
 Write-Host "[INFO] Dirección IP asignada manualmente: $serverIP"
-
-
-
-# Instalación del rol DNS
-Install-WindowsFeature -Name DNS -IncludeManagementTools
-Write-Host "[INFO] Rol DNS instalado correctamente."
-
-# Reiniciar el servicio DNS para asegurar que esté activo
-Restart-Service DNS
 
 # Crear la zona primaria
 try {
