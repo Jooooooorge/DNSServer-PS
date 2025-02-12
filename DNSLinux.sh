@@ -4,7 +4,7 @@
 
 sudo -i
 sudo apt update && sudo apt upgrade -y
-sudo apt update && apt install net-tools -y
+sudo apt install net-tools -y
 sudo apt install bind9 bind9utils bind9doc -y
 sudo apt install dnsutils 
 
@@ -47,7 +47,7 @@ sudo nano /etc/bind/named.conf.local
 
 
 # Nos dirigimos a la carpeta de zonas
-sudo cd /etc/bind/zones
+cd /etc/bind/zones
 
 # Copíamos el archivo db.local para crear la zona
 sudo cp /etc/bind/db.local /etc/bind/zones/misitio.com
