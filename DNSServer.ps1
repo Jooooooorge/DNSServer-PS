@@ -20,23 +20,23 @@ if (-not (Validate-IP $ipAddress)) {
 Install-WindowsFeature -Name DNS
 
 # Configurar el servidor DNS para resolver peticiones
-    # Crear una zona DNS para el dominio ingresado
-    Add-DnsServerPrimaryZone -Name $domain -ZoneFile "$domain.dns" -DynamicUpdate "NonSecureAndSecure"
+# Crear una zona DNS para el dominio ingresado
+Add-DnsServerPrimaryZone -Name $domain -ZoneFile "$domain.dns" -DynamicUpdate "NonSecureAndSecure"
 
-    # Crear el registro A para el dominio ingresado y asignar la IP proporcionada
-    Add-DnsServerResourceRecordA -ZoneName $domain -Name "@" -AllowUpdateAny -IPv4Address $ipAddress
-    
-    # Crear la zona inversa para buscar por IP
-    $ipParts = $ipAddress.Split('.')
-    $reverseIp = "$($ipParts[2]).$($ipParts[1]).$($ipParts[0]).in-addr.arpa"
-    Add-DnsServerPrimaryZone -Name $reverseIp -ZoneFile "$reverseIp.dns" -DynamicUpdate "NonSecureAndSecure"
-    
-    # Crear el registro PTR para la zona inversa
-    Add-DnsServerResourceRecordPTR -ZoneName $reverseIp -Name "$($ipParts[3])" -PTRDomainName "$domain"
-    
+# Crear el registro A para el dominio ingresado y asignar la IP proporcionada
+Add-DnsServerResourceRecordA -ZoneName $domain -Name "@" -AllowUpdateAny -IPv4Address $ipAddress
 
-    # Reinicio de servidor
-    Restart-Service DNS
+# Crear la zona inversa para buscar por IP
+$ipParts = $ipAddress.Split('.')
+$reverseIp = "$($ipParts[2]).$($ipParts[1]).$($ipParts[0]).in-addr.arpa"
+Add-DnsServerPrimaryZone -Name $reverseIp -ZoneFile "$reverseIp.dns" -DynamicUpdate "NonSecureAndSecure"
+
+# Crear el registro PTR para la zona inversa
+Add-DnsServerResourceRecordPTR -ZoneName $reverseIp -Name "$($ipParts[3])" -PTRDomainName "$domain"
+
+
+# Reinicio de servidor
+Restart-Service DNS
     
 # Configurar el servidor DNS para responder a consultas (forwarders)
 Write-Host "El servidor fue configurado correctamente!!"
