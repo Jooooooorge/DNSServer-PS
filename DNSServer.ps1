@@ -33,9 +33,7 @@ Install-WindowsFeature -Name DNS
     
     # Crear el registro PTR para la zona inversa
     Add-DnsServerResourceRecordPTR -ZoneName $reverseIp -Name "$($ipParts[3])" -PTRDomainName "$domain"
-    
-    # Configurar el servidor para resolver consultas
-    Set-DnsServerForwarder -IPAddress $ipAddress
+
 
     # Reinicio de servidor
     Restart-Service DNS
