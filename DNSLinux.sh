@@ -2,7 +2,7 @@
 # SCRIPT para la creación de un servidor DNS en Ubuntu Server
 # Instalación de BIND9
 sudo apt install net-tools -y
-sudo apt install bind9 bind9utils bind9doc -y
+sudo apt install bind9 bind9utils -y
 sudo apt install dnsutils 
 
 # Crear la carptea donde se guardaran las zonas
@@ -84,5 +84,3 @@ sudo systemctl restart bind9
 # Permitir el trafico DNS en el servidor
 sudo ufw allow 53
 sudo ufw reload
-
-# Resetear el servicio
