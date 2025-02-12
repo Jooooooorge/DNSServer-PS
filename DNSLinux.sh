@@ -5,6 +5,22 @@ sudo apt install net-tools -y
 sudo apt install bind9 bind9utils -y
 sudo apt install dnsutils 
 
+# Configurar la ip a estatica
+sudo bash -c 'cat <<EOF > /etc/netplan/00-installer-config.yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 192.168.0.199/24
+      gateway4: 192.168.0.1
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 8.8.4.4
+EOF'
 # Crear la carptea donde se guardaran las zonas
 sudo mkdir /etc/bind/zones
 
