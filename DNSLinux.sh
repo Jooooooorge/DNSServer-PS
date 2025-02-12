@@ -21,6 +21,10 @@ network:
           - 8.8.8.8
           - 8.8.4.4
 EOF'
+
+# Confirmar la edición
+sudo netplan apply
+
 # Crear la carptea donde se guardaran las zonas
 sudo mkdir /etc/bind/zones
 
