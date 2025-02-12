@@ -1,3 +1,7 @@
+#************************************************************************************************
+# Script para la automatizar la creación de un servidor DNS en PowerShell
+
+
 # Solicitar al usuario el dominio y la IP
 $domain = Read-Host "Ingrese el nombre del dominio (por ejemplo: misitio.com)"
 $ipAddress = Read-Host "Ingrese la dirección IP del Dominio (Server: 192.168.0.199)"
