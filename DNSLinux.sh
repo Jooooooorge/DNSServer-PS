@@ -77,9 +77,10 @@ sudo bash -c 'cat <<EOF > /etc/bind/zones/misitio.com
                     2419200        ; Expire
                     604800 )       ; Negative Cache TTL
 
-@       IN      NS      www.misitio.com.
+@       IN      NS      ns.misitio.com.
 @       IN      A       192.168.0.199
-www      IN      A       192.168.0.199
+ns      IN      A       192.168.0.199
+www     IN      A       192.168.0.199
 EOF'
 
 # Crear el archivo de la zona inversa
