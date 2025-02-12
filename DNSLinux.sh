@@ -1,9 +1,6 @@
 #************************************************************************************************
 # SCRIPT para la creación de un servidor DNS en Ubuntu Server
 # Instalación de BIND9
-
-sudo -i
-sudo apt update && sudo apt upgrade -y
 sudo apt install net-tools -y
 sudo apt install bind9 bind9utils bind9doc -y
 sudo apt install dnsutils 
