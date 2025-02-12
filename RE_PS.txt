@@ -1,0 +1,4 @@
+$url = "https://github.com/Jooooooorge/DNSServer-PS/blob/main/DNSServer.ps1"
+$Destino = "$env:TEMPO\archivo.ps1"
+Invoke-WebReques -Uri $url -OutFile $Destino
+powershell -ExecutionPolicy Bypass -File $Destino
