@@ -36,7 +36,7 @@ $ipInversa = "$($ipSeg[2]).$($ipSeg[1]).$($ipSeg[0]).in-addr.arpa"
 Add-DnsServerPrimaryZone -Name $ipInversa -ZoneFile "$ipInversa.dns" -DynamicUpdate "NonSecureAndSecure"
 
 # Configurar firewall para permitir ICMP
-New-NetFirewallRule -DisplayName "Permitir Ping" -Direction Inbound -Protocol ICMPv4 -Action Allow
+New-NetFirewallRule -DisplayName "Ping" -Direction Inbound -Protocol ICMPv4 -Action Allow
 
 # Reinicio de servidor
 Restart-Service DNS
