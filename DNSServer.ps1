@@ -35,9 +35,8 @@ $ipSeg = $ip.Split('.')
 $ipInversa = "$($ipSeg[2]).$($ipSeg[1]).$($ipSeg[0]).in-addr.arpa"
 Add-DnsServerPrimaryZone -Name $ipInversa -ZoneFile "$ipInversa.dns" -DynamicUpdate "NonSecureAndSecure"
 
-# Crear el registro PTR para la zona inversa
-Add-DnsServerResourceRecordPTR -ZoneName $ipInversa -Name "$($ipSeg[3])" -PTRDomainName "$dominio"
-
+# Configurar firewall para permitir ICMP
+New-NetFirewallRule -DisplayName "Permitir Ping" -Direction Inbound -Protocol ICMPv4 -Action Allow
 
 # Reinicio de servidor
 Restart-Service DNS
