@@ -1,9 +1,9 @@
 #************************************************************************************************
 # SCRIPT para la creación de un servidor DNS en Ubuntu Server
-# Instalación de BIND9
-sudo apt install net-tools -y
-sudo apt install bind9 bind9utils -y
-sudo apt install dnsutils 
+
+# Actualizar e instalar paquetes necesarios
+sudo apt update
+sudo apt install -y net-tools bind9 bind9utils dnsutils
 
 # Configurar la ip a estatica
 sudo bash -c 'cat <<EOF > /etc/netplan/00-installer-config.yaml
@@ -97,8 +97,7 @@ sudo bash -c 'cat <<EOF > /etc/bind/zones/misitio.com.rev
 EOF'
 
 
-# Reiniciar el servicio para reflejar la edición anterior
-sudo systemctl enable bind9
+# Reiniciar el servicio para aplicar cambios
 sudo systemctl restart bind9
 
 # Permitir el trafico DNS en el servidor
