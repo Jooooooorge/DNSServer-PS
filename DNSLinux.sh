@@ -7,8 +7,8 @@ sudo apt update
 sudo apt install -y net-tools bind9 bind9utils dnsutils
 
 # Solicitar al usuario el dominio e IP
-read -p "Ingresa el nombre del dominio: " dominio
-read -p "Ingresa la dirección IP: " ip
+read -p "Ingresa el nombre del dominio (Ejemplo: misitio.com): " dominio
+read -p "Ingresa la dirección IP (Server: 192.168.0.199): " ip
 
 # Configurar la IP a estática
 echo "network:
