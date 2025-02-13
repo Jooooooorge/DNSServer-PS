@@ -11,8 +11,7 @@ read -p "Ingresa el nombre del dominio: " dominio
 read -p "Ingresa la dirección IP: " ip
 
 # Configurar la IP a estática
-sudo bash -c "cat <<EOF > /etc/netplan/00-installer-config.yaml
-network:
+echo "network:
   version: 2
   renderer: networkd
   ethernets:
@@ -24,8 +23,7 @@ network:
       nameservers:
         addresses:
           - 8.8.8.8
-          - 8.8.4.4
-EOF"
+          - 8.8.4.4" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
 
 # Aplicar cambios de red
 sudo netplan apply
@@ -38,20 +36,17 @@ IFS='.' read -r seg1 seg2 seg3 seg4 <<< "$ip"
 ipInvertida="${seg3}.${seg2}.${seg1}"
 
 # Configurar named.conf.options
-sudo bash -c "cat <<EOF > /etc/bind/named.conf.options
-options {
+echo "options {
     directory \"/var/cache/bind\";
     forwarders {
         8.8.8.8;
     };
     dnssec-validation auto;
     listen-on-v6 { any; };
-};
-EOF"
+};" | sudo tee /etc/bind/named.conf.options > /dev/null
 
 # Configurar named.conf.local
-sudo bash -c "cat <<EOF > /etc/bind/named.conf.local
-zone \"$dominio\" IN {
+echo "zone \"$dominio\" IN {
     type master;
     file \"/etc/bind/zones/$dominio\";
 };
@@ -59,12 +54,10 @@ zone \"$dominio\" IN {
 zone \"$ipInvertida.in-addr.arpa\" IN {
     type master;
     file \"/etc/bind/zones/$dominio.rev\";
-};
-EOF"
+};" | sudo tee /etc/bind/named.conf.local > /dev/null
 
 # Crear la zona directa
-sudo bash -c "cat <<EOF > /etc/bind/zones/$dominio
-\$TTL    604800
+echo "\$TTL    604800
 @       IN      SOA     $dominio. root.$dominio. (
                         1         ; Serial
                     604800         ; Refresh
@@ -75,12 +68,10 @@ sudo bash -c "cat <<EOF > /etc/bind/zones/$dominio
 @       IN      NS      ns.$dominio.
 @       IN      A       $ip
 ns      IN      A       $ip
-www     IN      A       $ip
-EOF"
+www     IN      A       $ip" | sudo tee /etc/bind/zones/$dominio > /dev/null
 
 # Crear la zona inversa
-sudo bash -c "cat <<EOF > /etc/bind/zones/$dominio.rev
-\$TTL    604800
+echo "\$TTL    604800
 @       IN      SOA     $dominio. root.$dominio. (
                         2         ; Serial
                     604800         ; Refresh
@@ -89,8 +80,7 @@ sudo bash -c "cat <<EOF > /etc/bind/zones/$dominio.rev
                     604800 )       ; Negative Cache TTL
 
 @       IN      NS      ns.$dominio.
-$seg4     IN      PTR     $dominio.
-EOF"
+$seg4     IN      PTR     $dominio." | sudo tee /etc/bind/zones/$dominio.rev > /dev/null
 
 # Reiniciar el servicio BIND9
 sudo systemctl restart bind9
