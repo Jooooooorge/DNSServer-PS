@@ -8,9 +8,7 @@ sudo apt install -y net-tools bind9 bind9utils dnsutils
 
 # Solicitar al usuario el dominio e IP
 read -p "Ingresa el nombre del dominio: " dominio
-echo "Dominio registrado: $dominio"
 read -p "Ingresa la dirección IP: " ip
-echo "IP registrada: $ip"
 
 # Configurar la IP a estática
 sudo bash -c "cat <<EOF > /etc/netplan/00-installer-config.yaml
