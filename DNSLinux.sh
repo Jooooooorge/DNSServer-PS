@@ -1,3 +1,4 @@
+#!/bin/bash
 #************************************************************************************************
 # SCRIPT para la creación de un servidor DNS en Ubuntu Server
 
@@ -5,8 +6,14 @@
 sudo apt update
 sudo apt install -y net-tools bind9 bind9utils dnsutils
 
-# Configurar la ip a estatica
-sudo bash -c 'cat <<EOF > /etc/netplan/00-installer-config.yaml
+# Solicitar al usuario el dominio e IP
+read -p "Ingresa el nombre del dominio: " dominio
+echo "Dominio registrado: $dominio"
+read -p "Ingresa la dirección IP: " ip
+echo "IP registrada: $ip"
+
+# Configurar la IP a estática
+sudo bash -c "cat <<EOF > /etc/netplan/00-installer-config.yaml
 network:
   version: 2
   renderer: networkd
@@ -14,93 +21,82 @@ network:
     enp0s3:
       dhcp4: no
       addresses:
-        - 192.168.0.199/24
+        - $ip/24
       gateway4: 192.168.0.1
       nameservers:
         addresses:
           - 8.8.8.8
           - 8.8.4.4
-EOF'
+EOF"
 
-# Confirmar la edición
+# Aplicar cambios de red
 sudo netplan apply
 
-# Crear la carptea donde se guardaran las zonas
-sudo mkdir /etc/bind/zones
+# Crear la carpeta donde se guardarán las zonas
+sudo mkdir -p /etc/bind/zones
 
-# Nos dirigimos a la carpeta donde se encuentra lo que descargamos
-cd /etc/bind/
+# Preparar la IP invertida para la zona inversa
+IFS='.' read -r seg1 seg2 seg3 seg4 <<< "$ip"
+ipInvertida="${seg3}.${seg2}.${seg1}"
 
-# Sobreescribir el archivo named.conf.options
-sudo bash -c 'cat <<EOF > /etc/bind/named.conf.options
-acl LAN {
-    192.168.0.0/24;
-};
-
+# Configurar named.conf.options
+sudo bash -c "cat <<EOF > /etc/bind/named.conf.options
 options {
-    directory "/var/cache/bind";
-    allow-query { localhost; LAN; };
+    directory \"/var/cache/bind\";
     forwarders {
-        8.8.8.8;  # Usamos el DNS de Google como Forwarder
+        8.8.8.8;
     };
-    recursion yes;  # Permite consultas recursivas
+    dnssec-validation auto;
     listen-on-v6 { any; };
 };
-EOF'
+EOF"
 
-# Sobreescribir el archivo named.conf.local
-sudo bash -c 'cat <<EOF > /etc/bind/named.conf.local
-zone "misitio.com" IN {
+# Configurar named.conf.local
+sudo bash -c "cat <<EOF > /etc/bind/named.conf.local
+zone \"$dominio\" IN {
     type master;
-    file "/etc/bind/zones/misitio.com";
+    file \"/etc/bind/zones/$dominio\";
 };
 
-zone "0.162.198.in-addr.arpa" IN {
+zone \"$ipInvertida.in-addr.arpa\" IN {
     type master;
-    file "/etc/bind/zones/misitio.com.rev";
+    file \"/etc/bind/zones/$dominio.rev\";
 };
-EOF'
+EOF"
 
-# Nos dirigimos a la carpeta de zonas
-cd /etc/bind/zones
-
-# Copíamos el archivo db.local para crear la zona
-sudo cp /etc/bind/db.local /etc/bind/zones/misitio.com
-
-# Crear el archivo de la zona para el dominio
-sudo bash -c 'cat <<EOF > /etc/bind/zones/misitio.com
+# Crear la zona directa
+sudo bash -c "cat <<EOF > /etc/bind/zones/$dominio
 \$TTL    604800
-@       IN      SOA     misitio.com. root.misitio.com. (
-                        3         ; Serial
+@       IN      SOA     $dominio. root.$dominio. (
+                        1         ; Serial
                     604800         ; Refresh
                     86400         ; Retry
                     2419200        ; Expire
                     604800 )       ; Negative Cache TTL
 
-@       IN      NS      ns.misitio.com.
-@       IN      A       192.168.0.199
-ns      IN      A       192.168.0.199
-www     IN      A       192.168.0.199
-EOF'
+@       IN      NS      ns.$dominio.
+@       IN      A       $ip
+ns      IN      A       $ip
+www     IN      A       $ip
+EOF"
 
-# Crear el archivo de la zona inversa
-sudo bash -c 'cat <<EOF > /etc/bind/zones/misitio.com.rev
+# Crear la zona inversa
+sudo bash -c "cat <<EOF > /etc/bind/zones/$dominio.rev
 \$TTL    604800
-@       IN      SOA     misitio.com. root.misitio.com. (
-                        3         ; Serial
+@       IN      SOA     $dominio. root.$dominio. (
+                        2         ; Serial
                     604800         ; Refresh
                     86400         ; Retry
                     2419200        ; Expire
                     604800 )       ; Negative Cache TTL
 
-@       IN      NS      ns.misitio.com.
-199     IN      PTR     misitio.com.
-EOF'
+@       IN      NS      ns.$dominio.
+$seg4     IN      PTR     $dominio.
+EOF"
 
-
-# Reiniciar el servicio para aplicar cambios
+# Reiniciar el servicio BIND9
 sudo systemctl restart bind9
 
-# Permitir el trafico DNS en el servidor
+# Permitir tráfico DNS
 sudo ufw allow 53
 sudo ufw reload
