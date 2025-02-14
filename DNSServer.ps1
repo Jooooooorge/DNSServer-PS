@@ -1,13 +1,12 @@
 #************************************************************************************************
 # Script para la automatizar la creación de un servidor DNS en PowerShell
 
+# Instalar el rol de servidor DNS si no está instalado
+Install-WindowsFeature -Name DNS
 
 # Solicitar al usuario el dominio y la IP
 $dominio = Read-Host "Ingrese el nombre del dominio (Ejemplo: misitio.com)"
 $ip = Read-Host "Ingrese la dirección IP del Dominio (Server: 192.168.0.199)"
-
-# Instalar el rol de servidor DNS si no está instalado
-Install-WindowsFeature -Name DNS
 
 # Configurar el servidor DNS para resolver peticiones
 # Crear una zona DNS para el dominio ingresado

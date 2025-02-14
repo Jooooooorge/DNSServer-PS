@@ -56,7 +56,7 @@ zone \"$ipInvertida.in-addr.arpa\" IN {
     file \"/etc/bind/zones/$dominio.rev\";
 };" | sudo tee /etc/bind/named.conf.local > /dev/null
 
-# Crear la zona directa
+# Configurar la zona primaria
 echo "\$TTL    604800
 @       IN      SOA     $dominio. root.$dominio. (
                         1         ; Serial
@@ -70,7 +70,7 @@ echo "\$TTL    604800
 ns      IN      A       $ip
 www     IN      A       $ip" | sudo tee /etc/bind/zones/$dominio > /dev/null
 
-# Crear la zona inversa
+# Configurar la zona inversa
 echo "\$TTL    604800
 @       IN      SOA     $dominio. root.$dominio. (
                         2         ; Serial
