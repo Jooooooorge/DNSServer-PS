@@ -19,7 +19,7 @@ echo "network:
       dhcp4: no
       addresses:
         - $ip/24
-      gateway4: 192.168.0.1
+      gateway4: 192.168.1.254
       nameservers:
         addresses:
           - 8.8.8.8

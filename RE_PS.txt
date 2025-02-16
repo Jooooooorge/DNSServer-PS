@@ -2,3 +2,9 @@ $url = "https://github.com/Jooooooorge/DNSServer-PS/blob/main/DNSServer.ps1"
 $Destino = "$env:TEMPO\archivo.ps1"
 Invoke-WebReques -Uri $url -OutFile $Destino
 powershell -ExecutionPolicy Bypass -File $Destino
+
+
+// Comandos para poner la distribución de teclado en español en WS25
+Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Preload' -Name '1' -Value '0000080A'
+sc start i8042prt
+shutdown /r /t 0
