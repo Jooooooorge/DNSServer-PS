@@ -21,6 +21,7 @@ Add-DnsServerResourceRecordA -Name "www" -ZoneName "$dominio" -AllowUpdateAny -I
 $ipSeg = $ip.Split('.')
 $ipInversa = "$($ipSeg[2]).$($ipSeg[1]).$($ipSeg[0]).in-addr.arpa"
 Add-DnsServerPrimaryZone -Name $ipInversa -ZoneFile "$ipInversa.dns" -DynamicUpdate "NonSecureAndSecure"
+Add-DnsServerResourceRecordPtr -Name "$($ipSeg[3])" -ZoneName "$ipInversa" -PtrDomainName "$dominio"
 
 # Configurar firewall para permitir ICMP
 New-NetFirewallRule -DisplayName "Ping" -Direction Inbound -Protocol ICMPv4 -Action Allow
