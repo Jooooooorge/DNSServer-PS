@@ -7,7 +7,7 @@ $dominio = Read-Host "Ingrese el nombre del dominio (Ejemplo: misitio.com)"
 $ip = Read-Host "Ingrese la dirección IP del Dominio (Server: 192.168.0.199)"
 
 # Instalar el rol de servidor DNS si no está instalado
-Install-WindowsFeature -Name DNS
+Install-WindowsFeature -Name DNS -IncludeManagementTools -Restart
 
 # Configurar el servidor DNS para resolver peticiones
 # Crear una zona DNS para el dominio ingresado
