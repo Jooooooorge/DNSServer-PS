@@ -38,9 +38,10 @@ echo "default-lease-time 43200;
         option routers 192.168.0.1; // **AQUI
         option domain-name-servers 8.8.8.8; 
     } " | sudo tee /etc/dhcp/dhcp.conf > /dev/null
-sudo nano /etc/default/isc-dhcp-server
-INTERFACESv4 = "eth0"
+
+echo "INTERFACESv4 = "enp0s3"" | sudo tee /etc/default/isc-dhcp-server > /dev/null
+
+sudo systemctl restart isc-dhpc-server
 
 sudo systemctl start isc-dhcp-server
 
-sudo systemctl restart isc-dhpc-server
