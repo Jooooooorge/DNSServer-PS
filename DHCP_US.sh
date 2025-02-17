@@ -19,10 +19,11 @@ echo "network:
       nameservers:
         addresses:
           - 8.8.8.8
-          - 8.8.4.4" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
-
+          - 8.8.4.4
+        routes:
+          - to: default
+          via: 192.168.0.1" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
 # Aplicar cambios de red
-sudo netplan generate
 sudo netplan apply  
 
 # Realizar los siguientes cambios en los arhivos de configuración
@@ -43,6 +44,7 @@ subnet 192.168.0.0 netmask 255.255.255.0 {
 echo "INTERFACESv4 = "\enp0s3"\"" | sudo tee /etc/default/isc-dhcp-server > /dev/null
 
 # Reniciar y habilitar el servicio
-sudo systemctl restart isc-dhpc-server
 sudo systemctl enable isc-dhcp-server
+
+sudo systemctl start isc-dhcp-server
 
