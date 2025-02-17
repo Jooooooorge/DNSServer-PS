@@ -10,14 +10,15 @@ sudo apt install isc-dhcp-server -y
 # Configuración de red estatica 
 echo "network:
   version: 2
+  renderer: networkd
   ethernets:
     enp0s3:
-      dhcp4: no
+      dhcp4: false
       addresses:
         - 192.168.0.10/24
       routes:
         - to: default
-        - via: 192.168.0.1
+         via: 192.168.0.1
       nameservers:
         addresses:
           - 8.8.8.8
