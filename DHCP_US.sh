@@ -5,7 +5,7 @@
 # Actualizar e instalar paquetes necesarios
 sudo apt update
 sudo apt install -y net-tools
-sudo apt install isc-dhcp-server
+sudo apt install isc-dhcp-server -y
 
 # Configuración de red estatica 
 echo "network:
@@ -42,4 +42,4 @@ echo "
     } 
 " | sudo tee /etc/dhcp/dhcp.conf > /dev/null
 
-sudo systemctl start isc-dhcp-server
+sudo systemctl restart isc-dhcp-server
