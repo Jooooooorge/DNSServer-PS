@@ -40,6 +40,6 @@ echo "
         option routers 192.168.1.254;
         option domain-name-servers 192.168.1.254; 
     } 
-" | sudo tee /etc/dhcp/dhcp.conf
+" | sudo tee /etc/dhcp/dhcp.conf > /dev/null
 
 sudo systemctl start isc-dhcp-server
