@@ -25,6 +25,7 @@ echo "network:
             via: 192.168.0.1" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
 
 # Aplicar cambios de red
+sudo netplan generate
 sudo netplan apply  
 
 # Realizar los siguientes cambios en los arhivos de configuración
