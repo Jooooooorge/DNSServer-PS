@@ -16,7 +16,7 @@ echo "network:
       dhcp4: no
       addresses:
         - 192.168.1.10/24
-      gateway4: 192.168.1.254
+      gateway4: 192.168.0.1
       nameservers:
         addresses:
           - 8.8.8.8
@@ -31,15 +31,15 @@ sudo netplan apply
 echo "
     default-lease-time 43200;
     max-lease-time 86400;
-    option subnet-masl 255.255.255.0;
-    option broadcast-address 192.168.1.255;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 192.168.0.255;
     option domain-name "local.lan";
-    authoritatvie;
-    subnet 192.168.1.0 netmask 255.255.255.0{
+    authoritative;
+    subnet 192.168.0.0 netmask 255.255.255.0 {
         range 192.168.1.20 192.168.1.30;
-        option routers 192.168.1.254;
-        option domain-name-servers 192.168.1.254; 
+        option routers 192.168.0.1;
+        option domain-name-servers 8.8.8.8; 
     } 
 " | sudo tee /etc/dhcp/dhcp.conf > /dev/null
 
-sudo systemctl restart isc-dhcp-server
+sudo systemctl restart isc-dhcp-servers
