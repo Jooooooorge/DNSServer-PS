@@ -19,10 +19,7 @@ echo "network:
       nameservers:
         addresses:
           - 8.8.8.8
-          - 8.8.4.4
-        routes:
-          - to: default
-            via: 192.168.0.1" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
+          - 8.8.4.4" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
 
 # Aplicar cambios de red
 sudo netplan generate
