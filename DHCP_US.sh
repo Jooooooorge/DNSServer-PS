@@ -30,18 +30,18 @@ sudo netplan apply
 echo "default-lease-time 43200;
     max-lease-time 86400;
     option subnet-mask 255.255.255.0;
-    option broadcast-address 192.168.0.255; // **AQUI
+    option broadcast-address 192.168.0.255; # **AQUI
     option domain-name "local.lan";
     authoritative;
-    subnet 192.168.0.0 netmask 255.255.255.0 { // **AQUI
-        range 192.168.0.20 192.168.0.30; // **AQUI
-        option routers 192.168.0.1; // **AQUI
+    subnet 192.168.0.0 netmask 255.255.255.0 { # **AQUI
+        range 192.168.0.20 192.168.0.30; # **AQUI
+        option routers 192.168.0.1; # **AQUI
         option domain-name-servers 8.8.8.8; 
     } " | sudo tee /etc/dhcp/dhcp.conf > /dev/null
 
-echo "INTERFACESv4 = "enp0s3"" | sudo tee /etc/dhcp/dhcpd.conf > /dev/null
+echo "INTERFACESv4 = "\enp0s3"\"" | sudo tee /etc/default/isc-dhcp-server > /dev/null
 
+# Reniciar y habilitar el servicio
 sudo systemctl restart isc-dhpc-server
-
 sudo systemctl start isc-dhcp-server
 
