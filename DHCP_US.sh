@@ -36,10 +36,10 @@ echo "
     option domain-name "local.lan";
     authoritative;
     subnet 192.168.0.0 netmask 255.255.255.0 {
-        range 192.168.1.20 192.168.1.30;
+        range 192.168.0.20 192.168.0.30;
         option routers 192.168.0.1;
         option domain-name-servers 8.8.8.8; 
     } 
 " | sudo tee /etc/dhcp/dhcp.conf > /dev/null
 
-sudo systemctl restart isc-dhcp-servers
+sudo systemctl start isc-dhcp-servers
