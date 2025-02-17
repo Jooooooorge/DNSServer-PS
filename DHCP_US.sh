@@ -39,7 +39,7 @@ echo "default-lease-time 43200;
         option domain-name-servers 8.8.8.8; 
     } " | sudo tee /etc/dhcp/dhcp.conf > /dev/null
 
-echo "INTERFACESv4 = "enp0s3"" | sudo tee /etc/default/isc-dhcp-server > /dev/null
+echo "INTERFACESv4 = "enp0s3"" | sudo tee /etc/dhcp/dhcpd.conf > /dev/null
 
 sudo systemctl restart isc-dhpc-server
 
