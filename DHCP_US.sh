@@ -17,7 +17,7 @@ echo "network:
         - 192.168.0.10/24
       routes:
         - to: default
-        via: 192.168.0.1
+        - via: 192.168.0.1
       nameservers:
         addresses:
           - 8.8.8.8
