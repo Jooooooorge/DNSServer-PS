@@ -15,7 +15,7 @@ echo "network:
     enp0s3:
       dhcp4: no
       addresses: [192.168.0.10/24]  // **AQUI
-      gateway4: 192.168.0.1 // **AQUI
+      // gateway4: 192.168.0.1 // **AQUI
       nameservers:
         addresses:
           - 8.8.8.8
