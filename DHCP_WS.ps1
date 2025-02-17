@@ -8,6 +8,6 @@ Install-WindowsFeature -Name DHCP -IncludeManagementTools
 # Crear ambito
 Add-Dhcpserverv4Scope  # Este ya nos solicita los datos para configurar el servidor
 
-
-
+# Mensaje de confirmación
+Write-Host "El servidor ha sido configurado"
 
