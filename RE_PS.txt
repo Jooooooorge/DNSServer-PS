@@ -1,10 +1,45 @@
-$url = "https://github.com/Jooooooorge/DNSServer-PS/blob/main/DNSServer.ps1"
-$Destino = "$env:TEMPO\archivo.ps1"
-Invoke-WebReques -Uri $url -OutFile $Destino
-powershell -ExecutionPolicy Bypass -File $Destino
-
 
 // Comandos para poner la distribución de teclado en español en WS25
 Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Preload' -Name '1' -Value '0000080A'
 sc start i8042prt
-shutdown /r /t 0
+shutdown /r /t 0 // reinicio inmediatio
+
+
+
+-- DEBIAN --
+// Renovar ip 
+sudo ip link set "nombre de interfaz" down
+sudo ip link set "nombre de interfaz" up
+
+ip a // Checar configuración de red
+
+# Investigar como asignar la config de red a través de powershell
+# **Asegurarse que el gateway sea el default para evitar errores 
+
+# Para consultar todo lo que podemos instalar
+# Get-WindowsFeatured
+
+# Comando para quitar advertencia
+# Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServerManager\Roles\12 -Name ConfigurationState -Value 2
+# Capturr IP incial y final
+# $IpInicial = Read-Host "Ingresa la dirección inicial"
+# $IpFinal = Read-Host "Ingresa la dirección final"
+
+
+# Activiar el dominio con el servicio
+# Add-DhcpServerInOC -DnsName "NombredelDominio" -IPAddress "IP"
+# Get-DhcpServerv4Scope
+# Add-DhcpServerv4Scope # Este comando te pide todos las datos -Gateway -DNS
+
+# Configurar DNS/Gateway
+# Set-DhcpServerv4OptionValue -ScopeId "ScopeID" -DnsServer "IpDns" -DnsDomain "Dominio" -Router "Gateway"
+
+
+# Verificar que la dirección del servidor no sea asginada 
+
+# Checar las direcciones IP usadas
+
+# Get-DhcpServerv4lease
+
+
+# Solicitar ip inicial, ip final
