@@ -15,14 +15,7 @@ echo "network:
     enp0s3:
       dhcp4: false
       addresses:
-        - 192.168.0.10/24
-      routes:
-        - to: default
-         via: 192.168.0.1
-      nameservers:
-        addresses:
-          - 8.8.8.8
-          - 8.8.4.4" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
+        - 192.168.0.10/24" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
 # Aplicar cambios de red
 sudo netplan apply  
 
