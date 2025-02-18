@@ -29,7 +29,7 @@ subnet 192.168.0.0 netmask 255.255.255.0 {
   option routers 192.168.0.1;
 }" | sudo tee /etc/dhcp/dhcpd.conf > /dev/null
 
-echo "INTERFACESv4 = "\enp0s3"\"" | sudo tee /etc/default/isc-dhcp-server > /dev/null
+echo "INTERFACESv4 = enp0s3" | sudo tee /etc/default/isc-dhcp-server > /dev/null
 
 # Reniciar y habilitar el servicio
 sudo systemctl enable isc-dhcp-server
