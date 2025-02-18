@@ -25,7 +25,7 @@ sudo netplan apply
 echo "default-lease-time 43200;
 max-lease-time 86400;
 subnet 192.168.0.0 netmask 255.255.255.0 {
-  range 192.168.0.20 192.168.0.30;
+  range 192.168.0.21 192.168.0.30;
   option routers 192.168.0.1;
 }" | sudo tee /etc/dhcp/dhcpd.conf > /dev/null
 

@@ -16,7 +16,7 @@ ip a // Checar configuración de red
 # Investigar como asignar la config de red a través de powershell
 # **Asegurarse que el gateway sea el default para evitar errores 
 
-# Para consultar todo lo que podemos instalar
+# Para consultar todo loe podemos instalar
 # Get-WindowsFeatured
 
 # Comando para quitar advertencia
