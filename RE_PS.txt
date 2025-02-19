@@ -2,7 +2,7 @@
 // Comandos para poner la distribución de teclado en español en WS25
 Set-ItemProperty -Path 'HKCU:\Keyboard Layout\Preload' -Name '1' -Value '0000080A'
 sc start i8042prt
-shutdown /r /t 0 // reinicio inmediatio
+shutdown /r /t 0 // reinicio inmediato POWERSHELL
 
 
 
@@ -12,6 +12,7 @@ sudo ip link set "nombre de interfaz" down
 sudo ip link set "nombre de interfaz" up
 
 ip a // Checar configuración de red
+
 
 # Investigar como asignar la config de red a través de powershell
 # **Asegurarse que el gateway sea el default para evitar errores 
@@ -43,3 +44,6 @@ ip a // Checar configuración de red
 
 
 # Solicitar ip inicial, ip final
+
+
+less /var/lib/dhcp/dhcpd.leases

@@ -15,7 +15,7 @@ echo "network:
     enp0s3:
       dhcp4: false
       addresses:
-        - 192.168.0.10/24" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
+        - 192.168.0.199/24" | sudo tee /etc/netplan/00-installer-config.yaml > /dev/null
 # Aplicar cambios de red
 sudo netplan apply  
 
@@ -25,9 +25,10 @@ sudo netplan apply
 echo "default-lease-time 43200;
 max-lease-time 86400;
 subnet 192.168.0.0 netmask 255.255.255.0 {
-  range 192.168.0.21 192.168.0.30;
+  range 192.168.0.51 192.168.0.60;
   option routers 192.168.0.1;
 }" | sudo tee /etc/dhcp/dhcpd.conf > /dev/null
+
 
 echo "INTERFACESv4 = enp0s3" | sudo tee /etc/default/isc-dhcp-server > /dev/null
 
